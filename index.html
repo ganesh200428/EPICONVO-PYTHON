@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Mini AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333333;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #response_box {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 1rem;
+            color: #333;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ChatGPT Mini AI</h1>
+        <textarea id="user_input" placeholder="Type your message here..."></textarea>
+        <button onclick="sendMessage()">Send</button>
+        <div id="response_box"></div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("user_input").value;
+            if (!userInput.trim()) {
+                alert("Please enter a message!");
+                return;
+            }
+            document.getElementById("user_input").value = "";
+            const responseBox = document.getElementById("response_box");
+            responseBox.innerHTML += `<div style="color: #007BFF;">You: ${userInput}</div>`;
+
+            try {
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userInput }),
+                });
+                const data = await response.json();
+                responseBox.innerHTML += `<div style="color: #333;">AI: ${data.response || data.error}</div>`;
+                responseBox.scrollTop = responseBox.scrollHeight;
+            } catch (error) {
+                responseBox.innerHTML += `<div style="color: red;">Error: An error occurred.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
